@@ -1,30 +1,64 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
+  <header class="p-0">
+    <navigation v-show="visible"></navigation>
+  </header>
+  <main class="p-0" style="height: 100%">
+    <router-view />
+  </main>
+  <footer class="p-0">
+    <my-footer></my-footer>
+  </footer>
 </template>
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+  import Navigation from "./views/Navigation.vue"
+  import MyFooter from "./views/Footer.vue"
+  export default {
+    data: function () {
+      return {}
+    },
+    components: {
+      Navigation,
+      MyFooter
+    },
+    computed: {
+      visible() {
+        return !/search/g.test(this.$router.currentRoute.value.path)
+      }
+    },
+    created() {
+      if (sessionStorage.getItem("store")) {
+        console.log(sessionStorage.getItem("store"))
+        this.$store.replaceState(JSON.parse(sessionStorage.getItem("store")))
+        console.log("[app.vue]", this.$store.state.test)
+      }
+      window.addEventListener("beforeunload", () => {
+        sessionStorage.setItem("store", JSON.stringify(this.$store.state))
+      })
     }
   }
-}
+</script>
+
+<style lang="less">
+  @import "./assets/less/space.css";
+
+  #app {
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
+      'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+
+    .image-slot {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      background: var(--el-fill-color-light);
+      color: var(--el-text-color-secondary);
+      font-size: 30px;
+    }
+  }
 </style>
